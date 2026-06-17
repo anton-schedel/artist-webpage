@@ -86,6 +86,7 @@
         en: {
             navAbout: 'About', navMusic: 'Music', navSocial: 'Social', navBooking: 'Booking',
             heroTagline: 'Indiepop artist from munich', listenNow: 'Listen now', followInstagram: 'Follow on Instagram',
+            statsTitle: 'Live on Spotify',
             musicTitle: 'Music', musicOpen: 'Open in Spotify', musicSubtitle: 'Stream my latest tracks and albums on Spotify',
             followTitle: 'Platforms', followSubtitle: 'Connect with Finn across platforms.',
             spotifySub: 'Follow and stream', appleSub: 'Listen and add', instagramSub: 'Follow @bisschenfinn', youtubeSub: 'Subscribe and listen', tiktokSub: 'Follow for clips',
@@ -120,8 +121,8 @@
             presskitSubtitle: 'All info, stats, biography and photos for media, booking and event organizers.',
             streamingStats: 'Streaming & Stats',
             streams: 'Streams',
-            listeners: 'Listeners/Year',
-            saves: 'Saves',
+            listeners: 'Monthly Listeners',
+            followers: 'Followers',
             releasedSongs: 'Released Songs',
             importantAppearances: 'Key Appearances',
             featuresReleases: 'Features & Releases',
@@ -157,6 +158,7 @@
         de: {
             navAbout: 'Über', navMusic: 'Musik', navSocial: 'Social', navBooking: 'Booking',
             heroTagline: 'Indiepop Artist aus München', listenNow: 'Jetzt hören', followInstagram: 'Folge auf Instagram',
+            statsTitle: 'Live auf Spotify',
             musicTitle: 'Musik', musicOpen: 'Auf Spotify öffnen', musicSubtitle: 'Höre meine neuesten Tracks und Alben auf Spotify',
             followTitle: 'Plattformen', followSubtitle: 'Folge Finn auf allen Plattformen.',
             spotifySub: 'Folgen und streamen', appleSub: 'Anhören und hinzufügen', instagramSub: 'Folge @bisschenfinn', youtubeSub: 'Abonnieren und hören', tiktokSub: 'Clips & Updates',
@@ -191,8 +193,8 @@
             presskitSubtitle: 'Alle Infos, Zahlen, Biografie und Fotos für Medien, Booking und Veranstalter.',
             streamingStats: 'Streaming & Stats',
             streams: 'Streams',
-            listeners: 'Hörer/Jahr',
-            saves: 'Saves',
+            listeners: 'Monatliche Hörer',
+            followers: 'Follower',
             releasedSongs: 'Veröffentlichte Songs',
             importantAppearances: 'Wichtige Erscheinungen',
             featuresReleases: 'Features & Releases',
@@ -240,6 +242,7 @@
         setText('#nav-social', t.navSocial);
         setText('#nav-booking', t.navBooking);
         setText('#hero-tagline', t.heroTagline);
+        setText('#stats-title', t.statsTitle);
         setText('#music-title', t.musicTitle);
         setText('#music-subtitle', t.musicSubtitle);
         setText('#music-open-btn-label', t.musicOpen);
@@ -283,7 +286,7 @@
         setText('#streaming-stats', t.streamingStats);
         setText('#streams-label', t.streams);
         setText('#listeners-label', t.listeners);
-        setText('#saves-label', t.saves);
+        setText('#followers-label', t.followers);
         setText('#released-songs', t.releasedSongs);
         setText('#important-appearances', t.importantAppearances);
         setText('#features-releases', t.featuresReleases);
@@ -368,5 +371,73 @@
                 }
             })();
         });
+    }
+
+    // Animated stat counters (presskit page) + live Spotify values.
+    // Endpoint is the Cloudflare Worker proxy; leave empty to keep static fallback numbers.
+    // See spotify-worker/README.md for setup.
+    const SPOTIFY_STATS_ENDPOINT = 'https://finn-spotify-stats.finnmusic.workers.dev';
+    const statStreams = query('#stat-streams');
+    const statListeners = query('#stat-listeners');
+    const statFollowers = query('#stat-followers');
+    const statEls = [statStreams, statListeners, statFollowers].filter(Boolean);
+
+    if (statEls.length) {
+        const parseNum = (s) => Number(String(s).replace(/[^\d]/g, '')) || 0;
+        const fmt = (n) => Number(n).toLocaleString('de-DE');
+        const targets = new Map(statEls.map(el => [el, parseNum(el.textContent)]));
+        const canAnimate = !reduceMotion && 'IntersectionObserver' in window;
+        const raf = new Map(); // in-flight animation id per element
+
+        const animateCount = (el, to, from = 0, dur = 1400) => {
+            if (raf.has(el)) cancelAnimationFrame(raf.get(el)); // supersede any running count
+            const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+            let start;
+            const step = (ts) => {
+                if (!start) start = ts;
+                const t = Math.min(1, (ts - start) / dur);
+                el.textContent = fmt(Math.round(from + (to - from) * easeOutCubic(t)));
+                if (t < 1) raf.set(el, requestAnimationFrame(step));
+                else { el.textContent = fmt(to); raf.delete(el); }
+            };
+            raf.set(el, requestAnimationFrame(step));
+        };
+
+        // Count up the first time each stat scrolls into view.
+        if (canAnimate) {
+            statEls.forEach(el => { el.textContent = '0'; });
+            const io = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const el = entry.target;
+                        el.dataset.shown = '1';
+                        animateCount(el, targets.get(el) || 0, 0);
+                        obs.unobserve(el);
+                    }
+                });
+            }, { threshold: 0.4 });
+            statEls.forEach(el => io.observe(el));
+        }
+
+        // Pull live numbers; update targets and re-animate any counter already shown.
+        if (SPOTIFY_STATS_ENDPOINT && (statStreams || statListeners || statFollowers)) {
+            const onLive = (el, val) => {
+                if (!el || val == null) return;
+                targets.set(el, Number(val));
+                if (canAnimate) {
+                    if (el.dataset.shown) animateCount(el, Number(val), parseNum(el.textContent), 700);
+                } else {
+                    el.textContent = fmt(val);
+                }
+            };
+            fetch(SPOTIFY_STATS_ENDPOINT)
+                .then(r => r.ok ? r.json() : Promise.reject(r.status))
+                .then(d => {
+                    onLive(statListeners, d.monthlyListeners);
+                    onLive(statStreams, d.totalStreams);
+                    onLive(statFollowers, d.followers);
+                })
+                .catch(() => { /* keep fallback targets */ });
+        }
     }
 })();

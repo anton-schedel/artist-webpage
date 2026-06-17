@@ -25,9 +25,10 @@
     <meta name="geo.region" content="DE-BY" />
     <meta name="geo.placename" content="München" />
     <link rel="canonical" href="https://www.finn-music.de/" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- JSON-LD Structured Data for Rich Results -->
     <script type="application/ld+json">
@@ -259,6 +260,31 @@
                 <h2 id="music-title" class="text-5xl md:text-6xl font-black tracking-tight mb-3">Music</h2>
                 <p id="music-subtitle" class="text-lg text-[color:var(--muted)] max-w-xl">Stream my latest tracks and albums on Spotify
                 </p>
+            </div>
+
+            <!-- Live Spotify stats -->
+            <div class="reveal mb-12 sm:mb-16" data-reveal>
+                <div class="mb-8 flex items-center gap-3">
+                    <span class="relative flex h-2.5 w-2.5" aria-hidden="true">
+                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--accent)] opacity-75"></span>
+                        <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-[color:var(--accent)]"></span>
+                    </span>
+                    <h3 id="stats-title" class="text-sm uppercase tracking-[0.2em] text-[color:var(--muted)] font-semibold">Live on Spotify</h3>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-6">
+                    <div class="text-center py-1">
+                        <div id="stat-streams" class="text-4xl sm:text-5xl font-black tracking-tight">63.021</div>
+                        <div id="streams-label" class="mt-2 text-sm uppercase tracking-wider text-[color:var(--muted)]">Streams</div>
+                    </div>
+                    <div class="text-center py-1">
+                        <div id="stat-listeners" class="text-4xl sm:text-5xl font-black tracking-tight">606</div>
+                        <div id="listeners-label" class="mt-2 text-sm uppercase tracking-wider text-[color:var(--muted)]">Monatliche Hörer</div>
+                    </div>
+                    <div class="text-center py-1">
+                        <div id="stat-followers" class="text-4xl sm:text-5xl font-black tracking-tight">322</div>
+                        <div id="followers-label" class="mt-2 text-sm uppercase tracking-wider text-[color:var(--muted)]">Follower</div>
+                    </div>
+                </div>
             </div>
 
             <!-- Spotify embed - no rounded card, just sharp edges -->

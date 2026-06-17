@@ -12,6 +12,7 @@
     <meta name="geo.region" content="DE-BY" />
     <meta name="geo.placename" content="München" />
     <link rel="canonical" href="https://www.finn-music.de/presskit.html" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.finn-music.de/presskit.html" />
@@ -49,7 +50,7 @@
     }
     </script>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'] } } } }
@@ -101,12 +102,12 @@
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-[color:var(--accent)] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 18V5l12-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm12-3a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
                         <span id="streaming-stats" class="text-lg font-bold">Streaming & Stats</span>
                     </div>
-                    <div class="text-3xl font-extrabold text-white mb-1">40.000</div>
+                    <div id="stat-streams" class="text-3xl font-extrabold text-white mb-1">63.021</div>
                     <div id="streams-label" class="text-sm text-[color:var(--muted)] mb-2">Streams</div>
-                    <div class="text-xl font-bold text-white mb-1">8.800</div>
-                    <div id="listeners-label" class="text-sm text-[color:var(--muted)] mb-2">Hörer/Jahr</div>
-                    <div class="text-xl font-bold text-white mb-1">860</div>
-                    <div id="saves-label" class="text-sm text-[color:var(--muted)]">Saves</div>
+                    <div id="stat-listeners" class="text-xl font-bold text-white mb-1">606</div>
+                    <div id="listeners-label" class="text-sm text-[color:var(--muted)] mb-2">Monatliche Hörer</div>
+                    <div id="stat-followers" class="text-xl font-bold text-white mb-1">322</div>
+                    <div id="followers-label" class="text-sm text-[color:var(--muted)]">Follower</div>
                 </div>
                 <div class="bg-white/[.03] border-l-4 border-[color:var(--accent)] p-6 flex flex-col items-start shadow-lg h-full justify-start">
                     <div class="flex items-center gap-3 mb-4">
@@ -343,19 +344,16 @@
         </a>
     </div>
     
-    <footer class="mt-16 text-center text-sm text-[color:var(--muted)]">
-    <div class="mt-8 text-center">
-        <a href="./index.html" class="inline-flex items-center gap-2 text-white/70 hover:text-white text-sm font-semibold transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            <span id="back-to-home">Zurück zur Startseite</span>
-        </a>
-    </div>
-        <a href="./presskit.html" class="text-[color:var(--accent)] hover:underline font-semibold">Presskit für Medien & Booking</a> · <a href="./impressum.html" class="hover:underline">Impressum</a>
-    </footer>
     <footer class="border-t border-white/5 mt-16">
         <div class="mx-auto max-w-7xl px-6 sm:px-8 py-10 text-sm text-[color:var(--muted)] flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>© <span id="year"></span> FINN. All rights reserved.</div>
-            <a href="./index.html#booking" class="hover:text-white transition uppercase tracking-wider">Booking</a>
+            <div class="flex items-center gap-4">
+                <a href="./index.html" class="hover:text-white transition uppercase tracking-wider"><span id="back-to-home">Zurück zur Startseite</span></a>
+                <span class="opacity-40">•</span>
+                <a href="./index.html#booking" class="hover:text-white transition uppercase tracking-wider">Booking</a>
+                <span class="opacity-40">•</span>
+                <a href="./impressum.html" class="hover:text-white transition uppercase tracking-wider">Impressum</a>
+            </div>
         </div>
     </footer>
     <script>const y = document.getElementById('year'); if (y) y.textContent = new Date().getFullYear();</script>
